@@ -59,7 +59,8 @@ async function seedNews(client) {
         slug TEXT NOT NULL UNIQUE,
         title TEXT NOT NULL,
         image TEXT NOT NULL,
-        content VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        date DATE NOT NULL
       );
     `);
 
@@ -70,16 +71,16 @@ async function seedNews(client) {
       DUMMY_NEWS.map(async (newItem) => {
         return client.query(
           `
-        INSERT INTO news (id, slug, title, image, content)
+        INSERT INTO news ( slug, title, image, content, date)
         VALUES ($1, $2, $3, $4, $5)
         ON CONFLICT (id) DO NOTHING;
       `,
           [
-            newItem.id,
             newItem.slug,
             newItem.title,
             newItem.image,
             newItem.content,
+            newItem.date,
           ]
         );
       })
@@ -92,17 +93,18 @@ async function seedNews(client) {
       news: insertedNews,
     };
   } catch (error) {
-    console.error("Error seeding users:", error);
+    console.error("Error seeding news:", error);
     throw error;
   }
 }
 
 async function main() {
+  console.log("Connecting to the database", process.env.PGHOST);
   const pool = new Pool({
-    user: "admin",
-    host: "db",
-    database: "next_news",
-    password: "admin",
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
     port: 5432,
   });
 

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import GoBackButton from "../GoBackButton";
 import Modal from "../Modal";
+import { getSingleNews } from "@/lib/actions";
 
-export default function NewsSlugPage({
-  news: { image, title, content, date },
-  slug,
-}) {
+export default async function NewsSlugPage({ slug }: { slug: string }) {
+  const data = await getSingleNews(slug);
+  console.log("🚀 ~ NewsSlugPage ~ data:", data);
   return (
     <>
       <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
@@ -18,7 +18,7 @@ export default function NewsSlugPage({
           >
             <img
               className="rounded-xl"
-              src={`/images/news/${image}`}
+              src={`/images/news/${data.image}`}
               alt="Image Description"
             />
           </button>
@@ -29,13 +29,22 @@ export default function NewsSlugPage({
               {/* <!-- Title --> */}
               <div className="space-y-2 md:space-y-4 mb-2">
                 <h2 className="font-bold text-3xl lg:text-4xl text-gray-800 dark:text-neutral-200">
-                  {title}
+                  {data.title}
                 </h2>
-                <p className="text-gray-500 dark:text-neutral-500">{content}</p>
+                <p className="text-gray-500 dark:text-neutral-500">
+                  {data.content}
+                </p>
               </div>
               {/* <!-- End Title --> */}
-              <time dateTime={date} className="text-sm italic">
-                {date}
+              <time
+                // dateTime={data.date.substring(0, 10)}
+                className="text-sm italic"
+              >
+                {new Date(data.date).toLocaleDateString("en-PT", {
+                  year: "numeric",
+                  month: "short",
+                  day: "2-digit",
+                })}
               </time>
 
               {/* <!-- List --> */}
@@ -117,7 +126,7 @@ export default function NewsSlugPage({
         </div>
         {/* <!-- End Grid --> */}
       </div>
-      <Modal image={image} />
+      <Modal image={data.image} />
     </>
   );
 }

@@ -1,18 +1,50 @@
 import { DUMMY_NEWS } from "@/data/dummy-news";
+import { pool } from "./db";
+
 export async function getAllNews() {
-  return DUMMY_NEWS;
+  const client = await pool.connect();
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const data = await client.query("SELECT * FROM news");
+    return data.rows;
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    throw error; // Re-throw the error to be handled by the caller
+  } finally {
+    client.release();
+  }
 }
 
 export async function getSingleNews(slug: string) {
-  return DUMMY_NEWS.find((news) => news.slug === slug);
+  const client = await pool.connect();
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const data = await client.query("SELECT * FROM news WHERE slug = $1", [
+      slug,
+    ]);
+
+    return data.rows[0];
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    throw error; // Re-throw the error to be handled by the caller
+  } finally {
+    client.release();
+  }
 }
 
-export function getLatestNews() {
+export async function getLatestNews() {
+  const client = await pool.connect();
   try {
-    // throw new Error("Not implemented");
-    return DUMMY_NEWS.slice(0, 3);
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    const data = await client.query(
+      "SELECT * FROM news ORDER BY date DESC LIMIT 3"
+    );
+    return data.rows;
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching news:", error);
+    throw error; // Re-throw the error to be handled by the caller
+  } finally {
+    client.release();
   }
 }
 

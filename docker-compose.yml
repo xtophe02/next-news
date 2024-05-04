@@ -26,7 +26,7 @@ services:
   #   image: dpage/pgadmin4
   #   restart: always
   #   ports:
-  #     - '8888:80'
+  #     - "8888:80"
   #   environment:
   #     PGADMIN_DEFAULT_EMAIL: moreira.christophe@gmail.com
   #     PGADMIN_DEFAULT_PASSWORD: admin
@@ -36,3 +36,4 @@ services:
   #     - db
 volumes:
   postgres_data:
+  # pgadmin-data:
